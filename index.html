@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo IPTV Player</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 사이드바: 채널 목록 및 검색 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-tv logo-icon"></i>
+                    <h1>NEO <span>IPTV</span></h1>
+                </div>
+            </div>
+
+            <!-- 플레이리스트 소스 선택기 -->
+            <div class="playlist-selector-wrapper">
+                <label for="playlist-select"><i class="fa-solid fa-list-ul"></i> 플레이리스트 선택</label>
+                <div class="custom-select">
+                    <select id="playlist-select">
+                        <option value="https://iptv-org.github.io/iptv/countries/kr.m3u" selected>대한민국 채널 (Korea)</option>
+                        <option value="https://iptv-org.github.io/iptv/index.m3u">전세계 채널 인덱스 (Global Index)</option>
+                        <option value="https://iptv-org.github.io/iptv/categories/news.m3u">글로벌 뉴스 (News)</option>
+                        <option value="https://iptv-org.github.io/iptv/categories/music.m3u">음악 채널 (Music)</option>
+                        <option value="https://iptv-org.github.io/iptv/categories/movies.m3u">영화 채널 (Movies)</option>
+                        <option value="https://iptv-org.github.io/iptv/categories/sports.m3u">스포츠 채널 (Sports)</option>
+                        <option value="custom">사용자 정의 M3U 주소 입력...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 사용자 정의 URL 입력창 (기본값 숨김) -->
+            <div id="custom-url-container" class="custom-url-container hidden">
+                <input type="text" id="custom-url-input" placeholder="https://example.com/playlist.m3u">
+                <button id="custom-url-btn"><i class="fa-solid fa-play"></i> 불러오기</button>
+            </div>
+
+            <!-- 검색 및 카테고리 필터 -->
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="채널 이름 검색...">
+                </div>
+            </div>
+
+            <!-- 채널 개수 정보 -->
+            <div class="channel-count-info">
+                로드된 채널: <span id="channel-count">0</span>개
+            </div>
+
+            <!-- 채널 목록 -->
+            <div class="channel-list-container">
+                <div id="channel-list" class="channel-list">
+                    <!-- JavaScript로 채널이 삽입됩니다. -->
+                    <div class="loading-channels">
+                        <i class="fa-solid fa-spinner fa-spin"></i> 채널 목록을 불러오는 중...
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 메인 콘텐츠 영역: 비디오 플레이어 -->
+        <main class="main-content">
+            <div class="player-container">
+                <!-- 비디오 태그 -->
+                <video id="video" controls autoplay playsinline></video>
+                
+                <!-- 플레이어 오버레이 메시지 (비디오 로딩 또는 오류 시) -->
+                <div id="player-overlay" class="player-overlay hidden">
+                    <div class="overlay-content">
+                        <i id="overlay-icon" class="fa-solid fa-circle-play"></i>
+                        <h2 id="overlay-title">시청할 채널을 선택해 주세요</h2>
+                        <p id="overlay-message">왼쪽 목록에서 보고 싶은 채널을 클릭하면 재생이 시작됩니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 재생 중인 채널 정보 및 메타데이터 -->
+            <div class="current-channel-info">
+                <div class="channel-detail-logo" id="active-logo-container">
+                    <i class="fa-solid fa-tv"></i>
+                </div>
+                <div class="channel-detail-text">
+                    <div class="tags" id="active-tags">
+                        <span class="tag-badge">READY</span>
+                    </div>
+                    <h2 id="active-channel-name">방송 대기 중</h2>
+                    <p id="active-channel-url" class="channel-url-text">재생 중인 스트림이 없습니다.</p>
+                </div>
+                <div class="player-actions">
+                    <button id="refresh-stream-btn" title="스트림 새로고침"><i class="fa-solid fa-rotate-right"></i> 다시 로드</button>
+                    <button id="copy-url-btn" title="주소 복사"><i class="fa-solid fa-copy"></i> 주소 복사</button>
+                </div>
+            </div>
+
+            <!-- 사용자 주의사항 및 팁 -->
+            <footer class="player-footer">
+                <p><i class="fa-solid fa-circle-info"></i> 일부 채널은 제공처의 서버 상태 또는 브라우저의 CORS(교차 출처 리소스 공유) 보안 정책으로 인해 재생이 원활하지 않을 수 있습니다.</p>
+            </footer>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
