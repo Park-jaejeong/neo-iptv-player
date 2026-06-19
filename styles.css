@@ -31,7 +31,13 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     overflow: hidden;
+}
+
+/* 데스크톱에서는 모바일 헤더 숨김 */
+.mobile-header {
+    display: none;
 }
 
 /* 주 컨테이너 레이아웃 */
@@ -54,12 +60,25 @@ body {
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    z-index: 10;
+    z-index: 100;
+    transition: var(--transition);
 }
 
 .sidebar-header {
     padding: 24px;
     border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-close-btn {
+    display: none; /* 데스크톱에서는 닫기 버튼 숨김 */
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
 }
 
 .logo {
@@ -546,6 +565,24 @@ body {
     gap: 6px;
 }
 
+/* 모바일 전용 오버레이 배경 */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .hidden {
     display: none !important;
 }
@@ -562,23 +599,148 @@ body {
     }
 }
 
-/* 반응형 미디어 쿼리 */
-@media (max-width: 992px) {
+/* 반응형 모바일 미디어 쿼리 (가장 중요) */
+@media (max-width: 868px) {
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
     .app-container {
         flex-direction: column;
+        height: calc(100vh - 60px); /* 모바일 헤더 높이를 제외한 영역 */
     }
-    .sidebar {
-        width: 100%;
-        height: 40%;
-        border-right: none;
+
+    /* 모바일 헤더 활성화 */
+    .mobile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 60px;
+        background: #0f0f12;
         border-bottom: 1px solid var(--border-color);
+        z-index: 80;
     }
+
+    .sidebar-toggle-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 18px;
+        transition: var(--transition);
+    }
+
+    .sidebar-toggle-btn:active {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: var(--primary);
+    }
+
+    /* 사이드바 -> 슬라이드식 오버레이 서랍장(Drawer) 변경 */
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 340px;
+        height: 100%;
+        background: #111116;
+        border-right: 1px solid var(--border-color);
+        border-radius: 0 20px 20px 0;
+        box-shadow: none;
+        z-index: 100;
+        display: flex;
+    }
+
+    .sidebar.open {
+        left: 0;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        transition: var(--transition);
+    }
+
+    .sidebar-close-btn:active {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* 메인 콘텐츠 영역 모바일 최적화 */
     .main-content {
-        height: 60%;
-        padding: 16px;
-    }
-    .current-channel-info {
         padding: 12px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .player-container {
+        border-radius: 14px;
+        max-height: 50vh;
+        aspect-ratio: 16/9;
+    }
+
+    /* 모바일 채널 정보 영역 레이아웃 조정 */
+    .current-channel-info {
         margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        gap: 12px;
+    }
+
+    .channel-detail-logo {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+    }
+
+    .channel-detail-logo i {
+        font-size: 18px;
+    }
+
+    #active-channel-name {
+        font-size: 15px;
+    }
+
+    .channel-url-text {
+        font-size: 11px;
+    }
+
+    .player-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .player-actions button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .sidebar-overlay {
+        display: block;
+    }
+
+    .player-footer {
+        margin-top: auto;
+        padding-top: 12px;
+    }
+
+    .player-footer p {
+        font-size: 10px;
+        line-height: 1.4;
     }
 }

@@ -15,14 +15,28 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- 모바일 전용 헤더 -->
+    <header class="mobile-header">
+        <div class="logo">
+            <i class="fa-solid fa-tv logo-icon"></i>
+            <h1>NEO <span>IPTV</span></h1>
+        </div>
+        <button id="sidebar-toggle-btn" class="sidebar-toggle-btn">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
     <div class="app-container">
-        <!-- 사이드바: 채널 목록 및 검색 -->
-        <aside class="sidebar">
+        <!-- 사이드바: 채널 목록 및 검색 (모바일에서는 슬라이드 인 드로어로 작동) -->
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
                     <i class="fa-solid fa-tv logo-icon"></i>
                     <h1>NEO <span>IPTV</span></h1>
                 </div>
+                <button id="sidebar-close-btn" class="sidebar-close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
             <!-- 플레이리스트 소스 선택기 -->
@@ -82,7 +96,7 @@
                     <div class="overlay-content">
                         <i id="overlay-icon" class="fa-solid fa-circle-play"></i>
                         <h2 id="overlay-title">시청할 채널을 선택해 주세요</h2>
-                        <p id="overlay-message">왼쪽 목록에서 보고 싶은 채널을 클릭하면 재생이 시작됩니다.</p>
+                        <p id="overlay-message">상단 메뉴 버튼을 눌러 채널을 선택하면 재생이 시작됩니다.</p>
                     </div>
                 </div>
             </div>
@@ -111,6 +125,10 @@
             </footer>
         </main>
     </div>
+    
+    <!-- 모바일 사이드바 배경 오버레이 레이어 -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <script src="app.js"></script>
 </body>
 </html>

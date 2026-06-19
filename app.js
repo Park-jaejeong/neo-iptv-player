@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const channelList = document.getElementById('channel-list');
     const channelCount = document.getElementById('channel-count');
     
+    // 모바일 드로어 제어 요소
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
     // 플레이어 오버레이 요소
     const playerOverlay = document.getElementById('player-overlay');
     const overlayIcon = document.getElementById('overlay-icon');
@@ -71,6 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 모바일 드로어 열기/닫기 이벤트
+    sidebarToggleBtn.addEventListener('click', openSidebar);
+    sidebarCloseBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('active');
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+    }
+
     // M3U 플레이리스트 로딩 및 파싱 함수
     async function loadPlaylist(url) {
         showLoadingState();
@@ -84,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderChannels(channels);
             
             if (channels.length > 0) {
-                showOverlay('fa-circle-play', '채널 로드 완료', '보고 싶은 채널을 왼쪽 목록에서 선택해 주세요.');
+                showOverlay('fa-circle-play', '채널 로드 완료', '보고 싶은 채널을 목록에서 선택해 주세요.');
             } else {
                 showOverlay('fa-triangle-exclamation', '채널 없음', '플레이리스트 파일 내부에서 올바른 채널을 찾을 수 없습니다.');
             }
@@ -113,6 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
         overlayIcon.className = `fa-solid ${iconClass}`;
         overlayTitle.innerHTML = title;
         overlayMessage.innerHTML = message;
+    }
+
+    // 모바일 지원을 위한 동적 안내 업데이트
+    if (window.innerWidth <= 868) {
+        document.getElementById('overlay-message').textContent = '상단 메뉴 버튼을 눌러 채널을 선택하면 재생이 시작됩니다.';
     }
 
     function hideOverlay() {
@@ -202,6 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 활성화 스타일 클래스 변경
                 document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
+                
+                // 모바일 환경일 경우, 채널 클릭 시 사이드바를 자동으로 닫음
+                if (window.innerWidth <= 868) {
+                    closeSidebar();
+                }
                 
                 playChannel(channel);
             });
